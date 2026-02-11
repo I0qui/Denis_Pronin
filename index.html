@@ -940,24 +940,26 @@
     </div>
 
 <script>
-    // Функция, которая прячет загрузчик
+    // 1. УБИРАЕМ ДОЛГУЮ ЗАГРУЗКУ
     function hideLoader() {
         const loader = document.getElementById('loader');
         if (loader && loader.style.display !== 'none') {
             loader.style.opacity = '0';
             setTimeout(() => {
                 loader.style.display = 'none';
-            }, 1000);
+            }, 600); // Плавное исчезновение
         }
     }
 
-    // Вариант 1: Прячем, когда всё честно загрузилось
+    // Скроет заставку, как только загрузится текст сайта (не дожидаясь тяжелых фото)
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(hideLoader, 1500); // 1.5 секунды на показ имени и убираем
+    });
+
+    // Резервный запуск, если DOMContentLoaded сработал слишком быстро
     window.addEventListener('load', hideLoader);
 
-    // Вариант 2: Предохранитель (скроет через 3 сек в любом случае)
-    setTimeout(hideLoader, 3000);
-
-    // Функции фильтрации и модалки (оставь их ниже без изменений)
+    // 2. ЛОГИКА ГАЛЕРЕИ (БЕЗ ИЗМЕНЕНИЙ)
     function filterGallery(category) {
         const cards = document.querySelectorAll('.card');
         const btns = document.querySelectorAll('.tab-btn');
@@ -988,22 +990,51 @@
         chat.style.display = (chat.style.display === 'flex') ? 'none' : 'flex';
     }
 
+    // 3. ОБНОВЛЕННЫЙ БОТ (ДОФИГА ФРАЗ)
     function sendMsg() {
         let input = document.getElementById('userInput');
         let text = input.value.trim().toLowerCase();
         if (!text) return;
+        
         let chat = document.getElementById('chatText');
         chat.innerHTML += `<div class="msg user">${input.value}</div>`;
         input.value = '';
+
         setTimeout(() => {
             let answer = "";
-            if (text.includes('привет')) answer = "Привет! Чем могу помочь?";
-            else if (text.includes('выстав')) answer = "Денис регулярно участвует в выставках. Последние события можно увидеть в разделе 'Выставки'!";
-            else answer = "Хороший вопрос! Денис ответит тебе быстрее в Telegram или ВК.";
+            
+            // Расширенная база знаний бота
+            if (text.includes('привет') || text.includes('здравствуй')) {
+                answer = "Привет! Я виртуальный помощник Дениса. Чем могу помочь?";
+            } else if (text.includes('цена') || text.includes('сколько стоит') || text.includes('прайс')) {
+                answer = "Стоимость зависит от сложности проекта. Напишите Денису напрямую в Telegram для точного расчета.";
+            } else if (text.includes('выстав') || text.includes('мероприятия')) {
+                answer = "Денис регулярно выставляется в галереях. Следите за разделом 'Выставки' на этом сайте!";
+            } else if (text.includes('макро') || text.includes('насекомые')) {
+                answer = "Макросъемка — это особая страсть Дениса. Здесь важна каждая деталь и терпение.";
+            } else if (text.includes('техника') || text.includes('камера') || text.includes('на что снимает')) {
+                answer = "Денис использует профессиональное оборудование с макро-объективами для достижения экстремальной четкости.";
+            } else if (text.includes('купить') || text.includes('заказать')) {
+                answer = "Вы можете заказать съемку или купить отпечаток любой работы. Просто напишите в личные сообщения.";
+            } else if (text.includes('диплом') || text.includes('награды') || text.includes('сертификат')) {
+                answer = "В разделе 'Дипломы' представлены подтверждения квалификации и победы в конкурсах.";
+            } else if (text.includes('где') || text.includes('город') || text.includes('локация')) {
+                answer = "Денис работает преимущественно на выездах, но связаться с ним можно из любой точки мира!";
+            } else if (text.includes('обучение') || text.includes('урок') || text.includes('мастер-класс')) {
+                answer = "По поводу мастер-классов и обучения макрофотографии пишите в личку с пометкой 'Обучение'.";
+            } else if (text.includes('как дела')) {
+                answer = "У меня отлично, я же бот! А Денис сейчас, скорее всего, на очередной крутой съемке.";
+            } else if (text.includes('спасибо') || text.includes('благодарю')) {
+                answer = "Рад был помочь! Если появятся еще вопросы — пишите.";
+            } else {
+                answer = "Интересный вопрос! Боюсь, тут нужен сам Денис. Напишите ему в Telegram или ВК, ссылки внизу страницы.";
+            }
+
             chat.innerHTML += `<div class="msg bot">${answer}</div>`;
-            chat.scrollTop = chat.scrollHeight;
+            chat.scrollTop = chat.scrollHeight; // Автопрокрутка вниз
         }, 600);
     }
 </script>
 
 by @io_qui
+
